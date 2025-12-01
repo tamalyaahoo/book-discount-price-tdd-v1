@@ -8,8 +8,19 @@ import java.util.List;
 @Service
 public class BookDiscountService {
 
-   public double calculatePrice(List<Book> bookList) {
-        return 50.0;
+    private static final double BOOK_PRICE = 50.0;
+
+
+
+    public double calculatePrice(List<Book> bookList) {
+        int reqBookCount = bookList.size();
+        double totalPrice = 0.0;
+        if(reqBookCount == 1)
+            totalPrice = BOOK_PRICE * reqBookCount;
+        else if(reqBookCount == 2){
+            totalPrice = (BOOK_PRICE * reqBookCount) * (1 - 0.05);
+        }
+        return totalPrice;
     }
 
 }
