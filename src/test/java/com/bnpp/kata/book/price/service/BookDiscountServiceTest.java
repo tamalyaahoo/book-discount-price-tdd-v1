@@ -1,5 +1,6 @@
 package com.bnpp.kata.book.price.service;
 
+import com.bnpp.kata.book.price.exception.InvalidBookException;
 import com.bnpp.kata.book.price.model.Book;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -8,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class BookDiscountServiceTest {
 
@@ -73,5 +75,111 @@ class BookDiscountServiceTest {
         );
 
         assertEquals(187.50, service.calculatePrice(items).getTotalPrice(), 0.01);
+    }
+
+    // ----------------------------------------------------------------------
+    //  VALIDATION TESTS
+    // ----------------------------------------------------------------------
+
+    @Test
+    @DisplayName("Throw exception when basket is null")
+    void testNullBasket_throwsException() {
+        assertThrows(InvalidBookException.class, () -> service.calculatePrice(null));
+    }
+
+    @Test
+    @DisplayName("Throw exception when basket has no entries")
+    void testEmptyBasket_throwsException() {
+        List<Book> items = List.of();
+        assertThrows(InvalidBookException.class, () -> service.calculatePrice(items));
+    }
+
+    @Test
+    @DisplayName("Throw exception when book title is null")
+    void testNullTitle_throwsException() {
+        List<Book> items = List.of(
+                new Book(null, 1)
+        );
+        assertThrows(InvalidBookException.class, () -> service.calculatePrice(items));
+    }
+
+    @Test
+    @DisplayName("Throw exception when book title is empty or blank")
+    void testEmptyTitle_throwsException() {
+        List<Book> items = List.of(
+                new Book("   ", 1)
+        );
+        assertThrows(InvalidBookException.class, () -> service.calculatePrice(items));
+    }
+
+    @Test
+    @DisplayName("Throw exception when quantity is negative")
+    void testNegativeQuantity_throwsException() {
+        List<Book> items = List.of(
+                new Book("Clean Code", -1)
+        );
+        assertThrows(InvalidBookException.class, () -> service.calculatePrice(items));
+    }
+
+    @Test
+    @DisplayName("Throw exception when all quantities are zero")
+    void testZeroCopiesOnly_throwsException() {
+        List<Book> items = List.of(
+                new Book("Clean Code", 0),
+                new Book("The Clean Coder", 0)
+        );
+        assertThrows(InvalidBookException.class, () -> service.calculatePrice(items));
+    }
+
+    // ----------------------------------------------------------------------
+    //  COMPLEX PRICE-KATA SCENARIO
+    // ----------------------------------------------------------------------
+
+    @Test
+    @DisplayName("Merge duplicate book titles ignoring case and sum their quantities")
+    void testCaseInsensitiveMerging() {
+        List<Book> items = List.of(
+                new Book("clean code", 1),
+                new Book("Clean Code", 2),
+                new Book("CLEAN CODE", 3)
+        );
+        // Total = 1 + 2 + 3 = 6 copies of 1 book
+        double price = service.calculatePrice(items).getTotalPrice();
+
+        assertEquals(6 * 50.0, price, 0.01); // No discount because only 1 distinct title
+    }
+
+    @Test
+    @DisplayName("Calculate optimal pricing for multi-set scenario resulting in 320 EUR")
+    void testKataExample_multipleSets_Optimal320() {
+        List<Book> items = List.of(
+                new Book("Clean Code", 2),
+                new Book("The Clean Coder", 2),
+                new Book("Clean Architecture", 2),
+                new Book("TDD", 1),
+                new Book("Legacy Code", 1)
+        );
+
+        assertEquals(320.0, service.calculatePrice(items).getTotalPrice(), 0.01);
+    }
+
+    @Test
+    @DisplayName("Calculate price when multiple copies of a single title are purchased with no discount")
+    void testSameTitleMultipleCopies_noDiscount() {
+        List<Book> items = List.of(
+                new Book("Clean Code", 3)
+        );
+        assertEquals(150.0, service.calculatePrice(items).getTotalPrice(), 0.01);
+    }
+
+    @Test
+    @DisplayName("Choose optimal grouping when some titles have multiple copies")
+    void testThreeTitles_multipleCopies_mixedOptimal() {
+        List<Book> items = List.of(
+                new Book("Clean Code", 2),
+                new Book("Clean Architecture", 1),
+                new Book("The Clean Coder", 2)
+        );
+        assertEquals(230.0, service.calculatePrice(items).getTotalPrice(), 0.01);
     }
 }
