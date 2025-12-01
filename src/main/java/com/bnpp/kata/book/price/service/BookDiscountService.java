@@ -15,10 +15,12 @@ public class BookDiscountService {
     public double calculatePrice(List<Book> bookList) {
         int reqBookCount = bookList.size();
         double totalPrice = 0.0;
-        if(reqBookCount == 1)
+        if(reqBookCount == 1) {
             totalPrice = BOOK_PRICE * reqBookCount;
-        else if(reqBookCount == 2){
+        }else if(reqBookCount == 2){
             totalPrice = (BOOK_PRICE * reqBookCount) * (1 - 0.05);
+        }else if(reqBookCount == 3){
+            totalPrice = (BOOK_PRICE * reqBookCount) * (1 - 0.10);
         }
         return totalPrice;
     }
