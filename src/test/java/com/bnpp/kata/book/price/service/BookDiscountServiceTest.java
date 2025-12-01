@@ -24,7 +24,7 @@ class BookDiscountServiceTest {
         List<Book> items = List.of(
                 new Book("Clean Code", 1)
         );
-        assertEquals(50.0, service.calculatePrice(items), 0.01);
+        assertEquals(50.0, service.calculatePrice(items).getTotalPrice(), 0.01);
     }
 
     @Test
@@ -34,7 +34,7 @@ class BookDiscountServiceTest {
                 new Book("Clean Code", 1),
                 new Book("The Clean Coder", 1)
         );
-        assertEquals(95.0, service.calculatePrice(items), 0.01);
+        assertEquals(95.0, service.calculatePrice(items).getTotalPrice(), 0.01);
     }
 
     @Test
@@ -45,7 +45,7 @@ class BookDiscountServiceTest {
                 new Book("The Clean Coder", 1),
                 new Book("Clean Architecture", 1)
         );
-        assertEquals(135.0, service.calculatePrice(items), 0.01);
+        assertEquals(135.0, service.calculatePrice(items).getTotalPrice(), 0.01);
     }
 
     @Test
@@ -58,7 +58,7 @@ class BookDiscountServiceTest {
                 new Book("TDD", 1)
         );
 
-        assertEquals(160.0, service.calculatePrice(items), 0.01);
+        assertEquals(160.0, service.calculatePrice(items).getTotalPrice(), 0.01);
     }
 
     @Test
@@ -72,6 +72,6 @@ class BookDiscountServiceTest {
                 new Book("Legacy Code", 1)
         );
 
-        assertEquals(187.50, service.calculatePrice(items), 0.01);
+        assertEquals(187.50, service.calculatePrice(items).getTotalPrice(), 0.01);
     }
 }

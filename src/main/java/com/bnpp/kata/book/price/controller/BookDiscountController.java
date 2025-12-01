@@ -1,0 +1,27 @@
+package com.bnpp.kata.book.price.controller;
+
+import com.bnpp.kata.book.price.model.BookPriceResponse;
+import com.bnpp.kata.book.price.model.BookRequest;
+import com.bnpp.kata.book.price.service.BookDiscountService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/api/v1/book/price")
+public class BookDiscountController {
+
+    private BookDiscountService bookDiscountService;
+
+    public BookDiscountController(BookDiscountService bookDiscountService) {
+        this.bookDiscountService = bookDiscountService;
+    }
+
+    @PostMapping("/calculate")
+    public ResponseEntity<BookPriceResponse> calculatePrice(@RequestBody BookRequest request) {
+        BookPriceResponse bookPriceResponse = bookDiscountService.calculatePrice(request.getBookList());
+        return ResponseEntity.ok(bookPriceResponse);
+    }
+    }

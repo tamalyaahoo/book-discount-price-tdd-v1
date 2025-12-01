@@ -1,6 +1,7 @@
 package com.bnpp.kata.book.price.service;
 
 import com.bnpp.kata.book.price.model.Book;
+import com.bnpp.kata.book.price.model.BookPriceResponse;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,12 +20,12 @@ public class BookDiscountService {
             5, 0.25
     );
 
-    public double calculatePrice(List<Book> bookList) {
+    public BookPriceResponse calculatePrice(List<Book> bookList) {
         int reqBookCount = bookList.size();
         double discount = DISCOUNTS.getOrDefault(reqBookCount, 0.0);
         double totalPrice;
         totalPrice = (BOOK_PRICE * reqBookCount) * (1 - discount);
-        return totalPrice;
+        return BookPriceResponse.builder().books(bookList).totalPrice(totalPrice).build();
     }
 
 }
